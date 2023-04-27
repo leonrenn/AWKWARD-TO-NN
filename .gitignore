@@ -161,3 +161,10 @@ cython_debug/
 
 # Data
 data/*
+pMSSMFactory-master-Analyses/*
+
+# Lightning Logs
+lightning_logs/*
+
+# VSCode
+.vscode/settings.json

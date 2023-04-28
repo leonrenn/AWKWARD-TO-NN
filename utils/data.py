@@ -99,7 +99,8 @@ def from_df_2_df(df: pd.DataFrame,
                     df[col] = df[col].apply(
                         lambda x: x + [0]*(max_len-len(x))
                         if isinstance(x, list) else x)
-            except Exception:
+            except Exception as e:
+                print(e)
                 print(f"Could not convert {col} to list.")
 
     # 5. Normalize the data (necessary for the classifier).
@@ -172,16 +173,22 @@ def sr_acc_rej(path_data: str,
         if file.endswith(".root"):
             # 1. Check if file exists in info directory.
             if f"{file.strip('.root')}.info" in info_files:
-                srs = pd.read_csv(
-                    path_info + f"{file.strip('.root')}.info")["SR"].to_list()
-                # 1. Open root file.
-                root_file: ur.ReadOnlyFile = ur.open(path_data + file)
-                # 2. Get arrays from root file.
-                ttree_arrays = root_file["ntuple"].arrays(srs)
-                signal_regions += [f"{file.strip('.root')}@{sr}" for sr in srs]
-                # 3. Convert awkward array to pandas dataframea and append to
-                # dataframe.
-                df = pd.concat([df, ak.to_dataframe(ttree_arrays)], axis=1)
+                try:
+                    srs = pd.read_csv(
+                        path_info +
+                        f"{file.strip('.root')}.info")["SR"].to_list()
+                    # 1. Open root file.
+                    root_file: ur.ReadOnlyFile = ur.open(path_data + file)
+                    # 2. Get arrays from root file.
+                    ttree_arrays = root_file["ntuple"].arrays(srs)
+                    signal_regions += [
+                        f"{file.strip('.root')}@{sr}" for sr in srs]
+                    # 3. Convert awkward array to pandas dataframea and
+                    # append to dataframe.
+                    df = pd.concat([df, ak.to_dataframe(ttree_arrays)], axis=1)
+                except Exception as e:
+                    print(e)
+                    print(f"Could not use {file}.")
     # 4. Assign new column names.
     df.columns = signal_regions
     # 5. Remove empty columns.

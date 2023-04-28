@@ -49,8 +49,9 @@ class MLP_classifier(pl.LightningModule):
         self.val_acc = Accuracy(task="binary")
         self.test_acc = Accuracy(task="binary")
 
-        # 4. Losses
+        # 4. Losses and accuracies.
         self.tl = []
+        self.ta = []
 
     def forward(self,
                 x: torch.Tensor) -> torch.Tensor:
@@ -76,6 +77,7 @@ class MLP_classifier(pl.LightningModule):
         # 5. Log accuracy.
         self.log(name='train_acc',
                  value=self.train_acc(y_hat, y))
+        self.ta.append(self.train_acc(y_hat, y).detach().numpy())
         return {'loss': loss}
 
     def validation_step(self,

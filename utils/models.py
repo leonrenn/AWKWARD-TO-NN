@@ -18,7 +18,7 @@ class MLP_classifier(pl.LightningModule):
                  hidden_dim: int = 10,
                  output_dim: int = 1,
                  output_method: Literal["classifier",
-                                        "rolr"] = "classifier") -> None:
+                                        "llhr"] = "classifier") -> None:
         super().__init__()
 
         # 0. Class attributes and save hyperparameters.
